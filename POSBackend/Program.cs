@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using POSBackend.Data;
+
 namespace POSBackend
 {
     public class Program
@@ -13,6 +16,11 @@ namespace POSBackend
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<PostDBContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("LocalConection"));
+            });
 
             var app = builder.Build();
 
