@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using POSShared.Entities;
 
 namespace POSBackend.Data
 {
@@ -9,10 +10,11 @@ namespace POSBackend.Data
 
         }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Role> Roles { get; set; }
-        public DbSet<RolePrivilege> RolePrivileges { get; set; }
-        public DbSet<UserType> UserTypes { get; set; }
-        public DbSet<UserRoleMapping> UserRoleMappings { get; set; }
+
+        public DbSet<User> Users => Set<User>();
+        public DbSet<Role> Roles => Set<Role>();
+        public DbSet<RolePrivilege> RolePrivileges => Set<RolePrivilege>();
+        public DbSet<UserType> UserTypes => Set<UserType>();
+        public DbSet<UserRoleMapping> UserRoleMappings => Set<UserRoleMapping>();
     }
 }

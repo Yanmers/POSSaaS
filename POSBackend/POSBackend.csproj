@@ -23,4 +23,8 @@
     <Folder Include="Data\Repository\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\POSShared\POSShared.csproj" />
+  </ItemGroup>
+
 </Project>
