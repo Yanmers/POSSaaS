@@ -1,20 +1,29 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using POSBackend.Data;
 using POSBackend.Models;
+using System.IdentityModel.Tokens.Jwt;
 using System.Runtime.CompilerServices;
+using System.Security.Claims;
+using System.Text;
 
 namespace POSBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[AllowAnonymous]
+    [Authorize]
     public class LoginController : ControllerBase
     {
         private readonly PostDBContext _PostDBContext;
+        private IConfiguration _config;
 
-        public LoginController(PostDBContext PostDBContext)
+        public LoginController(PostDBContext PostDBContext, IConfiguration config)
         {
             _PostDBContext = PostDBContext;
+            _config = config;
         }
 
         [HttpGet]
@@ -25,49 +34,76 @@ namespace POSBackend.Controllers
             return Ok(user);
         }
 
+        //[HttpPost]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //public ActionResult<User> CreateUser([FromBody] UserDTO model)
+        //{
+        //    try
+        //    {
+        //        if (!ModelState.IsValid)
+        //        {
+        //            return BadRequest($"Validar {model}, not fount");
+        //        }
+
+
+        //        User user = new User
+        //        {
+        //            UserName = model.UserName,
+        //            Password = model.Password,
+        //            PasswordSalt = model.PasswordSalt,
+        //            UserType = model.UserType,
+        //            IsActive = true,
+        //            IsDelete = false,
+        //            CreateDate = DateTime.Now
+
+
+        //        };
+
+        //        if (user == null)
+        //        {
+        //            return NotFound($"Usuario {user}, Invalido");
+        //        }
+
+        //        _PostDBContext.Add(user);
+        //        _PostDBContext.SaveChanges();
+
+        //        return Ok(user);
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        return BadRequest($"Validar Error {ex}");
+        //    }
+        //}
+
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<User> CreateUser([FromBody] UserDTO model)
+        public ActionResult<User> Login([FromBody] UserDTO model)
         {
-            try
+            // 1. Validar usuario contra base de datos
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest($"Validar {model}, not fount");
-                }
-
-
-                User user = new User
-                {
-                    UserName = model.UserName,
-                    Password = model.Password,
-                    PasswordSalt = model.PasswordSalt,
-                    UserType = model.UserType,
-                    IsActive = true,
-                    IsDelete = false,
-                    CreateDate = DateTime.Now
-
-
+                var claims = new[] {
+                    new Claim(JwtRegisteredClaimNames.Sub, model.UserName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
 
-                if (user == null)
-                {
-                    return NotFound($"Usuario {user}, Invalido");
-                }
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-                _PostDBContext.Add(user);
-                _PostDBContext.SaveChanges();
+                var token = new JwtSecurityToken(
+                    issuer: _config["Jwt:Issuer"],
+                    audience: _config["Jwt:Audience"],
+                    claims: claims,
+                    expires: DateTime.Now.AddMinutes(60),
+                    signingCredentials: creds
+                );
 
-                return Ok(user);
+                return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
             }
-            catch (Exception ex)
-            {
-
-                return BadRequest($"Validar Error {ex}");
-            }
+            return Ok(Unauthorized());
         }
 
 
