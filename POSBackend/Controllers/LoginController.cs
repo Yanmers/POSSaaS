@@ -52,13 +52,13 @@ namespace POSBackend.Controllers
 
                 User user = new User
                 {
-                    UserName = model.UserName,
-                    Password = model.Password,
-                    PasswordSalt = model.PasswordSalt,
-                    UserType = model.UserType,
-                    IsActive = true,
-                    IsDelete = false,
-                    CreateDate = DateTime.Now
+                    //UserName = model.UserName,
+                    //Password = model.Password,
+                    //PasswordSalt = model.PasswordSalt,
+                    //UserType = model.UserType,
+                    //IsActive = true,
+                    //IsDelete = false,
+                    //CreateDate = DateTime.Now
 
 
                 };
