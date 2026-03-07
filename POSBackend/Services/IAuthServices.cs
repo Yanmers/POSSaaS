@@ -9,15 +9,3 @@ namespace POSBackend.Services
         Task<AuthResponse> RegisterAsync(RegisterRequest request);
     }
 }
-
-
-
-//public Task<AuthResponse> LoginAsync(LoginRequest request)
-//{
-//    throw new NotImplementedException();
-//}
-
-//public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
-//{
-//   
-//}
