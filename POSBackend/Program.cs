@@ -1,6 +1,7 @@
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Experimental;
 using POSBackend.Data;
 using System.Text;
 
@@ -24,20 +25,39 @@ namespace POSBackend
                 options.UseSqlServer(builder.Configuration.GetConnectionString("LocalConection"));
             });
 
-            builder.Services.AddAuthentication("Bearer")
-            .AddJwtBearer(options =>
+            //JWTToken
+            builder.Services.AddAuthentication(options =>
             {
-                options.TokenValidationParameters = new TokenValidationParameters
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                    ValidIssuer = builder.Configuration["JwtSetting:Issuer"],
+                    ValidAudience = builder.Configuration["JwtSetting:Audience"],
+                    IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
+                        System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JwtSetting:SecretKey"]!))
                 };
             });
+
+
+            //Cors Policy
+            builder.Services.AddCors(opt =>
+            {
+                opt.AddPolicy("AllowAllOrigins", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+                });
+            });
+
 
             var app = builder.Build();
 
@@ -50,7 +70,10 @@ namespace POSBackend
 
             app.UseHttpsRedirection();
 
+            //Add Cors and Authentication.
+            app.UseCors("AllowAllOrigins");
             app.UseAuthentication();
+
             app.UseAuthorization();
 
 
