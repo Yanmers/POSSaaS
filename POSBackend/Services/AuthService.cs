@@ -40,7 +40,7 @@ namespace POSBackend.Services
         {
             if (await _userRepository.UserExistAsync(request.Email))
             {
-                return null; //User Already Exits.
+                return null;
             }
 
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);

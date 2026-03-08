@@ -1,7 +1,11 @@
-﻿namespace POSFrontend.Models
+﻿using POSShared.Enums;
+using System.ComponentModel.DataAnnotations;
+
+namespace POSFrontend.Models
 {
     public class UserViewModel
     {
+
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string UserName { get; set; } = string.Empty;
@@ -10,5 +14,6 @@
         public bool IsActive { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime ModifiTime { get; set; }
+
     }
 }

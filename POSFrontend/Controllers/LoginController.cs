@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using POSFrontend.Models;
 using POSFrontend.Services;
 
@@ -7,25 +6,25 @@ namespace POSFrontend.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly IConfiguration _conf;
         private readonly UserService _userService;
-        public LoginController(IConfiguration conf, UserService userService)
+
+        public LoginController(UserService userService)
         {
-            _conf = conf;
             _userService = userService;
         }
 
 
         public IActionResult Index()
         {
-
             return View();
         }
+
 
         public IActionResult Register()
         {
             return View();
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Index(UserViewModel model)
@@ -53,9 +52,6 @@ namespace POSFrontend.Controllers
         }
 
 
-
-
-
         [HttpPost]
         public async Task<IActionResult> Register(UserViewModel model)
         {
@@ -64,16 +60,20 @@ namespace POSFrontend.Controllers
                 return View(model);
             }
 
-            var result = await _userService.RegisterAsync(model);
+            var registerResponse = await _userService.RegisterAsync(model);
 
-            if (!result)
+            if (registerResponse == null)
             {
-                ModelState.AddModelError("", "No se pudo registrar el usuario");
+                ModelState.AddModelError("", "Error en el registro");
                 return View(model);
             }
 
+
+            HttpContext.Session.SetString("Token", registerResponse.Token);
+            HttpContext.Session.SetString("FullName", registerResponse.FullName);
+            HttpContext.Session.SetInt32("UserId", registerResponse.UserId);
+
             return RedirectToAction("Index", "Login");
         }
-
     }
 }
