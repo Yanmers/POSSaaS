@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using POSFrontend.Models;
+using POSFrontend.Services;
 
 namespace POSFrontend.Controllers
 {
     public class LoginController : Controller
     {
         private readonly IConfiguration _conf;
-        public LoginController(IConfiguration conf)
+        private readonly UserService _userService;
+        public LoginController(IConfiguration conf, UserService userService)
         {
             _conf = conf;
+            _userService = userService;
         }
 
 
@@ -25,63 +28,48 @@ namespace POSFrontend.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index([FromBody] UserViewModel model)
+        public async Task<IActionResult> Index(UserViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("Index", "Login");
-            }
-
-            UserViewModel userViewModel = new UserViewModel
-            {
-                Name = model.Name,
-                PasswordHash = model.PasswordHash
-
-            };
-            if (userViewModel == null)
-            {
-                return NotFound($"favor validar {userViewModel} es incorrecto ");
-            }
-            else
-            {
-                //Guardar userViewModel en la base de datos.
-
-                return RedirectToAction("Index", "Home");
+                return View(model);
             }
 
 
+            var user = await _userService.LoginAsync(model.UserName, model.PasswordHash);
 
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Usuario o contraseña incorrectos");
+                return View(model);
+            }
+
+
+            HttpContext.Session.SetString("UserName", user.UserName);
+            HttpContext.Session.SetInt32("UserId", user.Id);
+
+            return RedirectToAction("Index", "Home");
         }
+
 
         [HttpPost]
-        public IActionResult Register([FromBody] UserViewModel model)
+        public async Task<IActionResult> Register(UserViewModel model)
         {
-            if (model == null)
+            if (!ModelState.IsValid)
             {
-                return BadRequest($"Favor validar{model}");
+                return View(model);
             }
 
-            UserViewModel userViewModel = new UserViewModel
-            {
-                Name = model.Name,
-                UserName = model.UserName,
-                Email = model.Email,
-                PasswordHash = model.PasswordHash
+            var result = await _userService.RegisterAsync(model);
 
-            };
-            if (userViewModel == null)
+            if (!result)
             {
-                return NotFound($"favor validar {userViewModel} es incorrecto ");
-            }
-            else
-            {
-                //Guardar userViewModel en la base de datos.
-
-                return RedirectToAction("Index", "LoginController");
+                ModelState.AddModelError("", "No se pudo registrar el usuario");
+                return View(model);
             }
 
-
-
+            return RedirectToAction("Index", "Login");
         }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Azure.Core;
+using Microsoft.IdentityModel.Tokens;
 using POSBackend.Repository;
 using POSShared.DTOs;
 using POSShared.Entities;
@@ -47,6 +48,7 @@ namespace POSBackend.Services
             var newUser = new User
             {
                 Name = request.FullName,
+                UserName = request.FullName,
                 Email = request.Email,
                 PasswordHash = passwordHash,
                 Role = request.Role

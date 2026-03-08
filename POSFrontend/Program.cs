@@ -1,3 +1,5 @@
+using POSFrontend.Services;
+
 namespace POSFrontend
 {
     public class Program
@@ -9,7 +11,10 @@ namespace POSFrontend
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddHttpClient();
+            builder.Services.AddHttpClient<UserService>();
+
+            builder.Services.AddAuthenticationCore();
+
 
             var app = builder.Build();
 
