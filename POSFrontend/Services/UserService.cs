@@ -1,4 +1,6 @@
-﻿using POSFrontend.Models;
+﻿using NuGet.Protocol.Plugins;
+using POSFrontend.Models;
+using POSFrontend.Providers;
 using POSShared.Entities;
 
 namespace POSFrontend.Services
@@ -10,16 +12,26 @@ namespace POSFrontend.Services
         public UserService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri("https://localhost:7062/api/");
+            _httpClient.BaseAddress = new Uri("https://localhost:7062");
         }
 
-        public async Task<UserViewModel?> LoginAsync(string username, string password)
+        public async Task<LoginResponse> LoginAsync(string email, string password)
         {
-            var response = await _httpClient.PostAsJsonAsync("auth/login", new { UserName = username, PasswordHash = password });
+            var payload = new
+            {
+                Email = email,
+                Password = password
+            };
+
+
+            var response = await _httpClient.PostAsJsonAsync("api/auth/login", payload);
+
             if (!response.IsSuccessStatusCode) return null;
 
-            return await response.Content.ReadFromJsonAsync<UserViewModel>();
+            return await response.Content.ReadFromJsonAsync<LoginResponse>();
         }
+
+
 
         public async Task<bool> RegisterAsync(UserViewModel user)
         {

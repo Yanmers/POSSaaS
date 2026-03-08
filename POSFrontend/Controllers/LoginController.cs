@@ -35,21 +35,25 @@ namespace POSFrontend.Controllers
                 return View(model);
             }
 
+            // Usar Email y PasswordHash del modelo
+            var loginResponse = await _userService.LoginAsync(model.Email, model.PasswordHash);
 
-            var user = await _userService.LoginAsync(model.UserName, model.PasswordHash);
-
-            if (user == null)
+            if (loginResponse == null)
             {
-                ModelState.AddModelError("", "Usuario o contraseña incorrectos");
+                ModelState.AddModelError("", "Email o contraseña incorrectos");
                 return View(model);
             }
 
-
-            HttpContext.Session.SetString("UserName", user.UserName);
-            HttpContext.Session.SetInt32("UserId", user.Id);
+            // Guardar token y datos en sesión
+            HttpContext.Session.SetString("Token", loginResponse.Token);
+            HttpContext.Session.SetString("FullName", loginResponse.FullName);
+            HttpContext.Session.SetInt32("UserId", loginResponse.UserId);
 
             return RedirectToAction("Index", "Home");
         }
+
+
+
 
 
         [HttpPost]

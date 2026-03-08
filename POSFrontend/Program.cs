@@ -13,8 +13,8 @@ namespace POSFrontend
 
             builder.Services.AddHttpClient<UserService>();
 
-            builder.Services.AddAuthenticationCore();
-
+            //builder.Services.AddAuthenticationCore();
+            builder.Services.AddSession();
 
             var app = builder.Build();
 
@@ -31,11 +31,14 @@ namespace POSFrontend
 
             app.UseRouting();
 
+            app.UseSession();       // después de UseRouting
+            app.UseAuthentication(); // si usas cookies/JWT
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Login}/{action=Index}/{id?}");
+
 
             app.Run();
         }
