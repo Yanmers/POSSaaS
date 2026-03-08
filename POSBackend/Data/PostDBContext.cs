@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using POSShared.Entities;
+using POSShared.Enums;
 
 namespace POSBackend.Data
 {
@@ -12,7 +13,6 @@ namespace POSBackend.Data
 
         //Start UserPermisin
         public DbSet<User> Users => Set<User>();
-        public DbSet<Role> Roles => Set<Role>();
         public DbSet<RolePrivilege> RolePrivileges => Set<RolePrivilege>();
         public DbSet<UserType> UserTypes => Set<UserType>();
         public DbSet<UserRoleMapping> UserRoleMappings => Set<UserRoleMapping>();

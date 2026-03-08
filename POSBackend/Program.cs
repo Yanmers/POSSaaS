@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Tokens.Experimental;
 using POSBackend.Data;
+using POSBackend.Repository;
+using POSBackend.Services;
 using System.Text;
 
 namespace POSBackend
@@ -24,6 +26,9 @@ namespace POSBackend
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("LocalConection"));
             });
+
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IAuthServices, AuthService>();
 
             //JWTToken
             builder.Services.AddAuthentication(options =>
