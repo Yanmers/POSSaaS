@@ -6,9 +6,9 @@ namespace POSFrontend.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly UserService _userService;
+        private readonly LoginService _userService;
 
-        public LoginController(UserService userService)
+        public LoginController(LoginService userService)
         {
             _userService = userService;
         }
@@ -34,7 +34,7 @@ namespace POSFrontend.Controllers
                 return View(model);
             }
 
-            // Usar Email y PasswordHash del modelo
+
             var loginResponse = await _userService.LoginAsync(model.Email, model.PasswordHash);
 
             if (loginResponse == null)
@@ -43,7 +43,7 @@ namespace POSFrontend.Controllers
                 return View(model);
             }
 
-            // Guardar token y datos en sesión
+
             HttpContext.Session.SetString("Token", loginResponse.Token);
             HttpContext.Session.SetString("FullName", loginResponse.FullName);
             HttpContext.Session.SetInt32("UserId", loginResponse.UserId);

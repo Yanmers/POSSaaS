@@ -7,11 +7,11 @@ using POSShared.Enums;
 
 namespace POSFrontend.Services
 {
-    public class UserService
+    public class LoginService
     {
         private readonly HttpClient _httpClient;
 
-        public UserService(HttpClient httpClient)
+        public LoginService(HttpClient httpClient)
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri("https://localhost:7062/");

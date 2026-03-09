@@ -11,7 +11,7 @@ namespace POSFrontend
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddHttpClient<UserService>();
+            builder.Services.AddHttpClient<LoginService>();
 
             //builder.Services.AddAuthenticationCore();
             builder.Services.AddSession();
