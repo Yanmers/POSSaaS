@@ -16,7 +16,7 @@ namespace POSShared.Entities
         public int CurrentStock { get; set; }
         public int StockMininum { get; set; }
         public int CategoryId { get; set; }
-        public Category? Category { get; set; }
+        public CategoryDto? Category { get; set; }
         public bool IsActive { get; set; }
         public string ImagenUrl { get; set; } = string.Empty;
 
