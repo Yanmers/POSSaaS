@@ -29,6 +29,10 @@ namespace POSBackend
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IAuthServices, AuthService>();
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+
 
             //JWTToken
             builder.Services.AddAuthentication(options =>

@@ -26,11 +26,11 @@ namespace POSBackend.Services
             var user = await _userRepository.GetUserByEmailAsync(request.Email);
             if (user == null)
             {
-                return null;
+                return null!;
             }
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             {
-                return null;
+                return null!;
             }
 
             return GenerateAuthResponse(user);
@@ -40,7 +40,7 @@ namespace POSBackend.Services
         {
             if (await _userRepository.UserExistAsync(request.Email))
             {
-                return null;
+                return null!;
             }
 
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);

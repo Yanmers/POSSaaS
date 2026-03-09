@@ -63,7 +63,5 @@ namespace POSBackend.Controllers
             return true;
         }
 
-
-
     }
 }
