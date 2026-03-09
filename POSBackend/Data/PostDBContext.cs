@@ -20,7 +20,7 @@ namespace POSBackend.Data
 
         //Start Product
         public DbSet<CashClosing> CashClosings => Set<CashClosing>();
-        public DbSet<CategoryDto> Categories => Set<CategoryDto>();
+        public DbSet<Category> Categories => Set<Category>();
         public DbSet<Product> Products => Set<Product>();
         public DbSet<Sale> Sales => Set<Sale>();
         public DbSet<SaleDetail> SaleDatils => Set<SaleDetail>();
