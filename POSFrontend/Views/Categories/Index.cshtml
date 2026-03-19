@@ -1,0 +1,105 @@
+﻿<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Categories</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#addCategoryModal">+ Add Category</a>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content">
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg">
+                        <div class="card card-primary card-outline">
+                            <div class="card-body">
+                                <h5 class="card-title">Card title</h5>
+                                <!-- Tabla de categorías -->
+                                <div class="mt-4">
+                                    <table class="table table-bordered">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Descripción</th>
+                                                <th>Opciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="categoryTable">
+                                            <!-- Aquí se insertarán las filas dinámicamente -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <form id="categoryForm">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="addCategoryLabel">Agregar Categoría</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form-group">
+                                                        <label for="categoryName">Nombre</label>
+                                                        <input type="text" class="form-control" id="categoryName" required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="categoryDescription">Descripción</label>
+                                                        <textarea class="form-control" id="categoryDescription" rows="3" required></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-success">Guardar</button>
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    document.getElementById('categoryForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('categoryName').value;
+      const description = document.getElementById('categoryDescription').value;
+
+      const table = document.getElementById('categoryTable');
+      const row = table.insertRow();
+
+      row.innerHTML = `
+        <td>${name}</td>
+        <td>${description}</td>
+        <td>
+          <button class="btn btn-warning btn-sm">Editar</button>
+          <button class="btn btn-danger btn-sm">Eliminar</button>
+        </td>
+      `;
+
+      // Cerrar modal
+      $('#addCategoryModal').modal('hide');
+      // Limpiar formulario
+      document.getElementById('categoryForm').reset();
+    });
+</script>
