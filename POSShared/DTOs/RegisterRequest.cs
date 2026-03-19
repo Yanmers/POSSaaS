@@ -6,6 +6,7 @@ namespace POSShared.DTOs
 {
     public class RegisterRequest
     {
+        //public string Name { get; set; }
         [Required]
         public string FullName { get; set; }
 

@@ -54,6 +54,9 @@ namespace POSBackend.Services
                 Role = request.Role
             };
 
+            newUser.CreateDate = DateTime.Now;
+            newUser.ModifiTime = DateTime.Now;
+
             var createdUser = await _userRepository.CreateUserAsync(newUser);
 
             return GenerateAuthResponse(createdUser);
