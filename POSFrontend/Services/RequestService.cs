@@ -27,11 +27,11 @@ namespace POSFrontend.Services
         private async Task AddAuthorizationHeaderAsync()
         {
 
-            var token = await _js.GetFromLocalStorage(TOKENKEY);
-            if (!string.IsNullOrEmpty(token))
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-            }
+            //var token = await _js.GetFromLocalStorage(TOKENKEY);
+            //if (!string.IsNullOrEmpty(token))
+            //{
+            //    _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            //}
         }
 
 
