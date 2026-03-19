@@ -8,6 +8,6 @@ namespace POSBackend.Services
         Task<CategoryDto> GetByIdAsync(int id);
         Task<CategoryDto> CreateAsync(CreateCategory request);
         Task<CategoryDto> UpdateAsync(int id, EditCategory request);
-        Task<bool> DeleteAsync(int id);
+
     }
 }

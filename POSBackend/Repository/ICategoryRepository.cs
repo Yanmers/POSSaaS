@@ -8,7 +8,7 @@ namespace POSBackend.Repository
         Task<IEnumerable<Category>> GetAllAsync();
         Task<Category> CreateAsync(Category category);
         Task<Category> UpdateAsync(Category category);
-        Task<bool> DeleAsync(int id);
+
         Task<bool> SaveChengesAsync();
 
     }

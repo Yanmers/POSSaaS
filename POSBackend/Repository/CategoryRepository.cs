@@ -19,20 +19,12 @@ namespace POSBackend.Repository
             return category;
         }
 
-        public async Task<bool> DeleAsync(int id)
-        {
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
-            {
-                return false;
-            }
-            _context.Categories.Remove(category);
-            return await SaveChengesAsync();
-        }
 
         public async Task<IEnumerable<Category>> GetAllAsync()
         {
-            return await _context.Categories.ToListAsync();
+            return await _context.Categories
+                .Where(n => n.IsActive)
+                .ToListAsync();
         }
 
         public async Task<Category> GetByIdAsync(int id)

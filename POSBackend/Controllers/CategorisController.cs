@@ -52,16 +52,7 @@ namespace POSBackend.Controllers
             return Ok(request);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<bool> Delete(int id)
-        {
-            var category = await _categoryService.GetByIdAsync(id);
-            if (category == null)
-            {
-                return false;
-            }
-            return true;
-        }
+
 
     }
 }
