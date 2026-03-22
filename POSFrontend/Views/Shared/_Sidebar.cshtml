@@ -11,12 +11,19 @@
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-
                 <li class="nav-item">
                     <a asp-action="Index" asp-controller="Product" class="nav-link">
                         <i class="nav-icon fas fa-book"></i>
                         <p>
                             Products
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a asp-action="Index" asp-controller="Sale" class="nav-link">
+                        <i class="nav-icon fas fa-edit"></i>
+                        <p>
+                            Bill
                         </p>
                     </a>
                 </li>
@@ -28,6 +35,7 @@
                         </p>
                     </a>
                 </li>
+
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
