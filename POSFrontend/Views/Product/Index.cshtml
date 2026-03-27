@@ -111,15 +111,52 @@
                                                 <thead>
                                                     <tr>
                                                         <th>ID</th>
-                                                        <th>User</th>
-                                                        <th>Date</th>
-                                                        <th>Status</th>
-                                                        <th>Reason</th>
+                                                        <th>Código</th>
+                                                        <th>Imagen</th>
+                                                        <th>Producto</th>
+                                                        <th>Descripción</th>
+                                                        <th>Precio</th>
+                                                        <th>Stock Actual</th>
+                                                        <th>Stock Mínimo</th>
+                                                        <th>Categoría</th>
+                                                        <th>Activo</th>
+                                                        <th>Acción</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
+                                                <tbody id="lista-productos">
+                                                    <tr>
+                                                        <td>1</td>
+                                                        <td>P001</td>
+                                                        <td><img src="https://via.placeholder.com/50" alt="Producto A" class="img-thumbnail"></td>
+                                                        <td>Producto A</td>
+                                                        <td>Descripción breve del producto A</td>
+                                                        <td>$100</td>
+                                                        <td>20</td>
+                                                        <td>5</td>
+                                                        <td>Electrónica</td>
+                                                        <td><span class="badge badge-success">Sí</span></td>
+                                                        <td>
+                                                            <button class="btn btn-success btn-sm" onclick="agregarProducto('Producto A',100)">Agregar</button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>2</td>
+                                                        <td>P002</td>
+                                                        <td><img src="https://via.placeholder.com/50" alt="Producto B" class="img-thumbnail"></td>
+                                                        <td>Producto B</td>
+                                                        <td>Descripción breve del producto B</td>
+                                                        <td>$50</td>
+                                                        <td>10</td>
+                                                        <td>3</td>
+                                                        <td>Accesorios</td>
+                                                        <td><span class="badge badge-danger">No</span></td>
+                                                        <td>
+                                                            <button class="btn btn-success btn-sm" onclick="agregarProducto('Producto B',50)">Agregar</button>
+                                                        </td>
+                                                    </tr>
                                                 </tbody>
                                             </table>
+
                                         </div>
                                         <!-- /.card-body -->
                                     </div>
@@ -129,6 +166,116 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para agregar productos -->
+<div class="modal fade" id="addProductsModal" tabindex="-1" role="dialog" aria-labelledby="addProductsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+            <!-- Encabezado -->
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addProductsModalLabel">Agregar Productos</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Cuerpo -->
+            <div class="modal-body">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs" id="productTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="manual-tab" data-toggle="tab" href="#manual" role="tab">Manual</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="excel-tab" data-toggle="tab" href="#excel" role="tab">Importar Excel</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content mt-3" id="productTabContent">
+                    <!-- Manual -->
+                    <div class="tab-pane fade show active" id="manual" role="tabpanel">
+                        <form id="manualProductForm">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="productCode">Código</label>
+                                    <input type="text" class="form-control" id="productCode" placeholder="Ej: P001">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="productName">Nombre</label>
+                                    <input type="text" class="form-control" id="productName" placeholder="Nombre del producto">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="productDescription">Descripción</label>
+                                <textarea class="form-control" id="productDescription" rows="2"></textarea>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="productPrice">Precio</label>
+                                    <input type="number" class="form-control" id="productPrice" step="0.01">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="currentStock">Stock Actual</label>
+                                    <input type="number" class="form-control" id="currentStock">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="stockMinimum">Stock Mínimo</label>
+                                    <input type="number" class="form-control" id="stockMinimum">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="categoryId">Categoría</label>
+                                    <select class="form-control" id="categoryId">
+                                        <option value="1">Electrónica</option>
+                                        <option value="2">Accesorios</option>
+                                        <!-- Más categorías -->
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="isActive">Activo</label>
+                                    <select class="form-control" id="isActive">
+                                        <option value="true">Sí</option>
+                                        <option value="false">No</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="imagenUrl">Imagen</label>
+                                <input type="file" class="form-control-file" id="imagenUrl">
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Importar Excel -->
+                    <div class="tab-pane fade" id="excel" role="tabpanel">
+                        <form id="excelProductForm">
+                            <div class="form-group">
+                                <label for="excelFile">Seleccionar archivo Excel</label>
+                                <input type="file" class="form-control-file" id="excelFile" accept=".xlsx,.xls">
+                            </div>
+                            <small class="form-text text-muted">
+                                El archivo debe contener las columnas: Código, Nombre, Descripción, Precio, Stock Actual, Stock Mínimo, Categoría, Activo, ImagenUrl.
+                            </small>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="guardarProducto()">Guardar</button>
+            </div>
+
         </div>
     </div>
 </div>
