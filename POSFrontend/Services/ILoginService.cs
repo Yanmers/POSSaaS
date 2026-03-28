@@ -1,9 +1,11 @@
-﻿namespace POSFrontend.Services
+﻿using POSFrontend.Models;
+using POSFrontend.Providers;
+
+namespace POSFrontend.Services
 {
     public interface ILoginService
     {
-        Task Login(string token);
-
-        Task Logout();
+        Task<LoginResponse?> LoginAsync(string email, string password);
+        Task<RegisterResponse?> RegisterAsync(UserViewModel model);
     }
 }

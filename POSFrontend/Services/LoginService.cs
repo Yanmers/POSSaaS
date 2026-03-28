@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using NuGet.Protocol.Plugins;
 using POSFrontend.Models;
 using POSFrontend.Providers;
@@ -7,7 +8,7 @@ using POSShared.Enums;
 
 namespace POSFrontend.Services
 {
-    public class LoginService
+    public class LoginService : ILoginService
     {
         private readonly HttpClient _httpClient;
 
@@ -17,6 +18,8 @@ namespace POSFrontend.Services
             _httpClient.BaseAddress = new Uri("https://localhost:7062/");
         }
 
+
+
         public async Task<LoginResponse?> LoginAsync(string email, string password)
         {
             var payload = new
@@ -24,7 +27,6 @@ namespace POSFrontend.Services
                 Email = email,
                 Password = password
             };
-
 
             var response = await _httpClient.PostAsJsonAsync("api/auth/login", payload);
 
@@ -49,6 +51,7 @@ namespace POSFrontend.Services
 
             return await response.Content.ReadFromJsonAsync<RegisterResponse>();
         }
+
     }
 }
 
