@@ -36,7 +36,7 @@ namespace POSFrontend.Services
             return await response.Content.ReadFromJsonAsync<CategoryResponse>();
         }
 
-        public Task<CategoryResponse?> ReadAsync(string name, string description)
+        public Task<CategoryResponse?> ReadAsync(Category category)
         {
             throw new NotImplementedException();
         }

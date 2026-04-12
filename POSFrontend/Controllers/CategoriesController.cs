@@ -28,7 +28,7 @@ namespace POSFrontend.Controllers
                 return BadRequest();
             }
 
-            var categoryResponse = await _category.ReadAsync(model.Name, model.Description);
+            var categoryResponse = await _category.CreateAsync(model.Name, model.Description);
 
 
             if (categoryResponse == null)
@@ -44,6 +44,20 @@ namespace POSFrontend.Controllers
 
             return RedirectToAction("Index", "Categories");
 
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll([FromBody] CategoriesViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+
+
+            return Ok();
         }
 
 
