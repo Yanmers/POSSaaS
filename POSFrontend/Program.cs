@@ -12,6 +12,7 @@ namespace POSFrontend
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddHttpClient<LoginService>();
+            builder.Services.AddHttpClient<CategoriesService>();
 
             //builder.Services.AddAuthenticationCore();
             builder.Services.AddSession();

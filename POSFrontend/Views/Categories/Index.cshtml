@@ -1,4 +1,10 @@
-﻿<!-- Content Wrapper. Contains page content -->
+﻿@model CategoriesViewModel
+
+@{
+    Layout = null;
+
+}
+<!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <div class="content-header">
@@ -41,7 +47,7 @@
                                 </div>
                                 <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryLabel" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
-                                        <form id="categoryForm">
+                                        <form id="categoryForm" asp-action="Index" asp-controller="Categories" method="post">
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title" id="addCategoryLabel">Agregar Categoría</h5>
@@ -60,7 +66,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-success">Guardar</button>
+                                                    <a asp-action="Index" asp-controller="Categories" class="btn btn-success">Guardar</a>
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                                                 </div>
                                             </div>
@@ -76,30 +82,14 @@
     </div>
 </div>
 
+@section script {
+    <!-- jQuery -->
+    <script src="~/adminLTE/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/adminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/adminLTE/dist/js/adminlte.min.js"></script>
+    <script src="~/js/Categories.js"></script>
+}
 
 
-<script>
-    document.getElementById('categoryForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const name = document.getElementById('categoryName').value;
-      const description = document.getElementById('categoryDescription').value;
-
-      const table = document.getElementById('categoryTable');
-      const row = table.insertRow();
-
-      row.innerHTML = `
-        <td>${name}</td>
-        <td>${description}</td>
-        <td>
-          <button class="btn btn-warning btn-sm">Editar</button>
-          <button class="btn btn-danger btn-sm">Eliminar</button>
-        </td>
-      `;
-
-      // Cerrar modal
-      $('#addCategoryModal').modal('hide');
-      // Limpiar formulario
-      document.getElementById('categoryForm').reset();
-    });
-</script>
