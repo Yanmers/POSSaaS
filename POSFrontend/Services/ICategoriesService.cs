@@ -7,7 +7,7 @@ namespace POSFrontend.Services
 {
     public interface ICategoriesService
     {
-        Task<CategoryResponse?> ReadAsync(Category category);
-        Task<CategoryResponse?> CreateAsync(CategoriesViewModel model);
+        Task<CategoryResponse?> ReadAsync(CategoriesViewModel category);
+        Task<CategoryResponse?> CreateAsync(string Name, string Description);
     }
 }

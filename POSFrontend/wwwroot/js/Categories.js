@@ -3,8 +3,8 @@ $("#categoryForm").submit(function (e) {
     e.preventDefault();
 
     var data = {
-        Email: $("#categoryName").val(),
-        Password: $("#categoryDescription").val()
+        Name: $("#Name").val(),
+        Description: $("#Description").val()
     };
 
     $.ajax({

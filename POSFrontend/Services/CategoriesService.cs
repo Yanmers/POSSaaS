@@ -21,12 +21,12 @@ namespace POSFrontend.Services
         }
 
 
-        public async Task<CategoryResponse?> CreateAsync([FromBody] CategoriesViewModel model)
+        public async Task<CategoryResponse?> CreateAsync(string name, string description)
         {
             var payload = new
             {
-                Name = model.Name,
-                Description = model.Description
+                Name = name,
+                Description = description
             };
 
             var response = await _httpClient.PostAsJsonAsync("api/Categoris", payload);
@@ -36,7 +36,7 @@ namespace POSFrontend.Services
             return await response.Content.ReadFromJsonAsync<CategoryResponse>();
         }
 
-        public Task<CategoryResponse?> ReadAsync(Category category)
+        public Task<CategoryResponse?> ReadAsync(CategoriesViewModel model)
         {
             throw new NotImplementedException();
         }

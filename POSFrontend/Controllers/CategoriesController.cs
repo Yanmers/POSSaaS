@@ -54,9 +54,6 @@ namespace POSFrontend.Controllers
             {
                 return BadRequest();
             }
-
-
-
             return Ok();
         }
 
