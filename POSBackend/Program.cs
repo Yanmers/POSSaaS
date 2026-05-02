@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Tokens.Experimental;
+using OfficeOpenXml;
 using POSBackend.Data;
 using POSBackend.Repository;
 using POSBackend.Services;
 using System.Text;
+using System.Text.Json;
 
 namespace POSBackend
 {
@@ -36,6 +38,7 @@ namespace POSBackend
             builder.Services.AddScoped<ISaleRepository, SaleRepository>();
             builder.Services.AddScoped<ISaleService, SaleService>();
 
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
 
             //JWTToken
@@ -70,6 +73,12 @@ namespace POSBackend
                     .AllowAnyMethod();
                 });
             });
+
+            builder.Services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            });
+
 
 
             var app = builder.Build();

@@ -12,7 +12,7 @@ using POSBackend.Data;
 namespace POSBackend.Migrations
 {
     [DbContext(typeof(PostDBContext))]
-    [Migration("20260502022928_Database")]
+    [Migration("20260502153524_Database")]
     partial class Database
     {
         /// <inheritdoc />

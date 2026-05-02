@@ -53,6 +53,12 @@ namespace POSBackend.Repository
             throw new NotImplementedException();
         }
 
+        public async Task InsertarProductosAsync(IEnumerable<Product> productos)
+        {
+            await _context.Products.AddRangeAsync(productos);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task UpdateAsync(Product producto)
         {
             _context.Products.Update(producto);

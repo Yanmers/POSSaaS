@@ -59,6 +59,11 @@ namespace POSBackend.Services
             await _productoRepository.DeleteAsync(id);
         }
 
+        public async Task InsertarProductosAsync(IEnumerable<Product> productos)
+        {
+            await _productoRepository.InsertarProductosAsync(productos);
+        }
+
         public async Task<IEnumerable<Product>> ObtenerPorCategoriaAsync(string categoria)
         {
             return await _productoRepository.GetByCategoriaAsync(categoria);

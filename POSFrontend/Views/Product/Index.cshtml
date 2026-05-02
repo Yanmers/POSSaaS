@@ -106,6 +106,7 @@
                                             </div>
                                         </div>
                                         <div class="card-body table-responsive p-0">
+
                                             <table class="table table-hover text-nowrap">
                                                 <thead>
                                                     <tr>
@@ -125,6 +126,13 @@
                                                 <tbody id="lista-productos">
                                                 </tbody>
                                             </table>
+                                            <ul class="pagination pagination-sm float-right">
+                                                <li class="page-item"><a class="page-link" href="#">«</a></li>
+                                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                <li class="page-item"><a class="page-link" href="#">»</a></li>
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
@@ -201,9 +209,7 @@
                                 <div class="form-group col-md-6">
                                     <label for="categoryId">Categoría</label>
                                     <select class="form-control" id="categoryId">
-                                        <option value="1">Electrónica</option>
-                                        <option value="2">Accesorios</option>
-                                        <!-- Más categorías -->
+                                        <!-- Opciones dinámicas desde el backend -->
                                     </select>
                                 </div>
                                 <div class="form-group col-md-6">
@@ -220,6 +226,20 @@
                                 <input type="file" class="form-control-file" id="imagenUrl">
                             </div>
                         </form>
+
+                        <div class="tab-pane fade" id="excel" role="tabpanel">
+                            <form id="excelProductForm" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <label for="excelFile">Seleccionar archivo Excel</label>
+                                    <input type="file" class="form-control-file" id="excelFile" accept=".xlsx,.xls">
+                                </div>
+                                <small class="form-text text-muted">
+                                    El archivo debe contener las columnas: Código, Nombre, Descripción, Precio, Stock Actual, Stock Mínimo, Categoría, Activo, ImagenUrl.
+                                </small>
+                                <button type="button" class="btn btn-primary" onclick="importarExcel()">Importar</button>
+                            </form>
+                        </div>
+
                     </div>
 
                     <!-- Importar Excel -->
@@ -250,45 +270,87 @@
 
 
 <script>
-    let productoEditandoId = 0; // variable global para saber si estamos editando
+    let productoEditandoId = 0;
+    let paginaActual = 1;
+    const productosPorPagina = 10;
+    let productos = []; // aquí guardamos todos los productos
 
-    // Cargar productos en la tabla
+    // Cargar todos los productos desde el backend
     async function cargarProductos() {
         try {
             const response = await fetch("https://localhost:7062/api/Producto");
-            const productos = await response.json();
+            productos = await response.json(); // guardamos todos los productos
 
-            const tbody = document.getElementById("lista-productos");
-            tbody.innerHTML = "";
-
-            productos.forEach(p => {
-                const fila = `
-                    <tr>
-                        <td>${p.id}</td>
-                        <td>${p.code}</td>
-                        <td><img src="${p.imagenUrl}" alt="${p.name}" class="img-thumbnail" width="50"></td>
-                        <td>${p.name}</td>
-                        <td>${p.description}</td>
-                        <td>$${p.price}</td>
-                        <td>${p.currentStock}</td>
-                        <td>${p.stockMininum}</td>
-                        <td>${p.categoryName}</td>
-                        <td><span class="badge ${p.isActive ? 'badge-success' : 'badge-danger'}">${p.isActive ? 'Sí' : 'No'}</span></td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" onclick="editarProducto(${p.id})">
-                                <i class="fas fa-edit"></i> Editar
-                            </button>
-                            <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${p.id})">
-                                <i class="fas fa-trash"></i> Eliminar
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += fila;
-            });
+            mostrarPagina(paginaActual);
+            renderizarPaginacion();
         } catch (error) {
             console.error("Error cargando productos:", error);
+            Swal.fire('Error', 'No se pudieron cargar los productos', 'error');
         }
+    }
+
+    // Mostrar productos de la página actual
+    function mostrarPagina(pagina) {
+        paginaActual = pagina;
+        const tbody = document.getElementById("lista-productos");
+        tbody.innerHTML = "";
+
+        const inicio = (pagina - 1) * productosPorPagina;
+        const fin = inicio + productosPorPagina;
+        const productosPagina = productos.slice(inicio, fin);
+
+        productosPagina.forEach(p => {
+            const fila = `
+                <tr>
+                    <td>${p.id}</td>
+                    <td>${p.code}</td>
+                    <td><img src="${p.imagenUrl}" alt="${p.name}" class="img-thumbnail" width="50"></td>
+                    <td>${p.name}</td>
+                    <td>${p.description}</td>
+                    <td>$${p.price}</td>
+                    <td>${p.currentStock}</td>
+                    <td>${p.stockMinimum}</td>
+                    <td>${p.categoryName}</td>
+                    <td><span class="badge ${p.isActive ? 'badge-success' : 'badge-danger'}">${p.isActive ? 'Sí' : 'No'}</span></td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editarProducto(${p.id})">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${p.id})">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
+                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += fila;
+        });
+    }
+
+    // Renderizar controles de paginación dinámicos
+    function renderizarPaginacion() {
+        const totalPages = Math.ceil(productos.length / productosPorPagina);
+        const paginacion = document.querySelector(".pagination");
+        paginacion.innerHTML = "";
+
+        // Botón « anterior
+        paginacion.innerHTML += `
+            <li class="page-item ${paginaActual === 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="mostrarPagina(${paginaActual - 1})">«</a>
+            </li>`;
+
+        // Botones de páginas
+        for (let i = 1; i <= totalPages; i++) {
+            paginacion.innerHTML += `
+                <li class="page-item ${i === paginaActual ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="mostrarPagina(${i})">${i}</a>
+                </li>`;
+        }
+
+        // Botón » siguiente
+        paginacion.innerHTML += `
+            <li class="page-item ${paginaActual === totalPages ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="mostrarPagina(${paginaActual + 1})">»</a>
+            </li>`;
     }
 
     // Guardar producto (nuevo o editado)
@@ -401,9 +463,71 @@
             }
         });
     }
+        // Cargar categorías en el dropdown
+    async function cargarCategorias() {
+        try {
+            const response = await fetch("https://localhost:7062/api/Categoris");
+            const categorias = await response.json();
+
+            const select = document.getElementById("categoryId");
+            select.innerHTML = ""; // limpiar opciones previas
+
+            categorias.forEach(c => {
+                const option = document.createElement("option");
+                option.value = c.id;
+                option.textContent = c.name;
+                select.appendChild(option);
+            });
+        } catch (error) {
+            console.error("Error cargando categorías:", error);
+            Swal.fire("Error", "No se pudieron cargar las categorías", "error");
+        }
+    }
+
+
+    //Importar desde Excel-Productos
+    async function importarExcel() {
+        const fileInput = document.getElementById("excelFile");
+        if (fileInput.files.length === 0) {
+            Swal.fire("Atención", "Debes seleccionar un archivo Excel", "warning");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+
+        try {
+            Swal.fire({
+                title: "Importando...",
+                text: "Procesando archivo Excel",
+                icon: "info",
+                showConfirmButton: false,
+                timer: 1500
+            });
+
+            const response = await fetch("https://localhost:7062/api/Producto/ImportarExcel", {
+                method: "POST",
+                body: formData
+            });
+
+            if (response.ok) {
+                Swal.fire("Éxito", "Productos importados correctamente", "success");
+                cargarProductos();
+            } else {
+                Swal.fire("Error", "No se pudo importar el archivo", "error");
+            }
+        } catch (error) {
+            console.error("Error importando Excel:", error);
+            Swal.fire("Error", "Ocurrió un problema al importar", "error");
+        }
+    }
+
 
     // Ejecutar al cargar la página
-    document.addEventListener("DOMContentLoaded", cargarProductos);
+    document.addEventListener("DOMContentLoaded", () => {
+        cargarProductos();
+        cargarCategorias();
+    });
 </script>
 
 
