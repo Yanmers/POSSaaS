@@ -14,8 +14,6 @@ namespace POSShared.Entities
         public decimal Subtotal { get; set; }
         public decimal TaxAmount { get; set; }
         public decimal TotalAmount { get; set; }
-
-        // Relación con usuario
         public int UserId { get; set; }
         public User User { get; set; } = null!;
         public int? CustomerId { get; set; }
