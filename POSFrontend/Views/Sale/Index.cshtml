@@ -114,34 +114,9 @@
                                     </tr>
                                 </thead>
                                 <tbody id="lista-productos">
-                                    <tr>
-                                        <td><img src="https://via.placeholder.com/50" alt="Laptop Pro" class="img-thumbnail"></td>
-                                        <td>Laptop Pro 15"</td>
-                                        <td>Potente laptop para trabajo</td>
-                                        <td>$1299.99</td>
-                                        <td>45</td>
-                                        <td>5</td>
-                                        <td>Electrónica</td>
-                                        <td><span class="badge badge-success">Sí</span></td>
-                                        <td>
-                                            <button class="btn btn-success btn-sm" onclick="agregarProducto('Laptop Pro 15',1299.99)">Agregar</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><img src="https://via.placeholder.com/50" alt="Mouse" class="img-thumbnail"></td>
-                                        <td>Mouse Inalámbrico</td>
-                                        <td>Mouse ergonómico sin cables</td>
-                                        <td>$29.99</td>
-                                        <td>150</td>
-                                        <td>10</td>
-                                        <td>Accesorios</td>
-                                        <td><span class="badge badge-success">Sí</span></td>
-                                        <td>
-                                            <button class="btn btn-success btn-sm" onclick="agregarProducto('Mouse Inalámbrico',29.99)">Agregar</button>
-                                        </td>
-                                    </tr>
                                 </tbody>
                             </table>
+
                         </div>
                     </div>
                 </div>
@@ -196,7 +171,7 @@
 
                             <!-- Botones -->
                             <div class="d-flex mt-3">
-                                <button class="btn btn-secondary flex-fill mr-2">
+                                <button class="btn btn-secondary flex-fill mr-2" onclick="cobrarVenta()">
                                     <i class="bi bi-cash-stack"></i> Cobrar
                                 </button>
                                 <button class="btn btn-light flex-fill" onclick="vaciarCarrito()">
@@ -215,5 +190,162 @@
 
 
 
+
+<script>
+    //Cargar productos desde el backend
+    async function cargarProductos() {
+        try {
+                const response = await fetch("https://localhost:7062/api/Producto");
+            if (!response.ok) throw new Error("Error al obtener productos");
+
+            const productos = await response.json();
+            const lista = document.getElementById("lista-productos");
+            lista.innerHTML = "";
+
+            productos.forEach(p => {
+                const fila = document.createElement("tr");
+                fila.innerHTML = `
+                    <td><img src="${p.imagenUrl}" alt="${p.name}" class="img-thumbnail" style="width:50px;height:50px;"></td>
+                    <td>${p.name}</td>
+                    <td>${p.description}</td>
+                    <td>$${p.price.toFixed(2)}</td>
+                    <td>${p.currentStock}</td>
+                    <td>${p.stockMininum}</td>
+                    <td>${p.category ? p.category.name : "Sin categoría"}</td>
+                    <td><span class="badge ${p.isActive ? "badge-success" : "badge-danger"}">${p.isActive ? "Sí" : "No"}</span></td>
+                    <td>
+                        <button class="btn btn-success btn-sm" onclick="agregarProducto(${p.id}, '${p.name}', ${p.price}, ${p.currentStock}, ${p.stockMininum})">Agregar</button>
+                    </td>
+                `;
+                lista.appendChild(fila);
+            });
+        } catch (error) {
+            console.error(error);
+            Swal.fire("Error", "No se pudieron cargar los productos", "error");
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", cargarProductos);
+
+    //Carrito
+    let carrito = [];
+
+    function agregarProducto(id, nombre, precio, stockActual, stockMinimo) {
+        if (stockActual <= stockMinimo) {
+            Swal.fire("Stock bajo", `El producto "${nombre}" está en nivel mínimo`, "warning");
+            return;
+        }
+
+        const producto = carrito.find(p => p.productId === id);
+        if (producto) {
+            producto.cantidad++;
+            producto.totalLinea = producto.cantidad * producto.precioUnitario;
+        } else {
+            carrito.push({
+                productId: id,
+                nombre: nombre,
+                cantidad: 1,
+                precioUnitario: precio,
+                totalLinea: precio
+            });
+        }
+        renderCarrito();
+    }
+
+    function renderCarrito() {
+        const lista = document.getElementById("carrito");
+        lista.innerHTML = "";
+        let subtotal = 0;
+
+        carrito.forEach(item => {
+            subtotal += item.totalLinea;
+            const li = document.createElement("li");
+            li.className = "list-group-item d-flex justify-content-between align-items-center";
+            li.innerHTML = `${item.nombre} x${item.cantidad} <span>$${item.totalLinea.toFixed(2)}</span>`;
+            lista.appendChild(li);
+        });
+
+        const iva = subtotal * 0.16;
+        const total = subtotal + iva;
+
+        document.getElementById("subtotal").innerText = subtotal.toFixed(2);
+        document.getElementById("iva").innerText = iva.toFixed(2);
+        document.getElementById("total").innerText = total.toFixed(2);
+    }
+
+    function vaciarCarrito() {
+        carrito = [];
+        renderCarrito();
+    }
+
+    //Cobrar venta con usuario logueado
+    async function cobrarVenta() {
+        if (carrito.length === 0) {
+            Swal.fire("Carrito vacío", "Agrega productos antes de cobrar", "info");
+            return;
+        }
+
+        const cliente = document.getElementById("cliente").value;
+        const metodoPago = document.getElementById("metodoPago").value;
+
+        const subtotal = parseFloat(document.getElementById("subtotal").innerText);
+        const iva = parseFloat(document.getElementById("iva").innerText);
+        const total = parseFloat(document.getElementById("total").innerText);
+
+        // Obtener datos de sesión
+        const userId = localStorage.getItem("userId");
+        const token = localStorage.getItem("token");
+
+        if (!userId || !token) {
+            Swal.fire("Error", "No hay usuario logueado", "error");
+            return;
+        }
+
+        const venta = {
+            customerName: cliente,
+            paymentMethod: metodoPago === "efectivo" ? 0 : metodoPago === "tarjeta" ? 1 : 2,
+            subtotal: subtotal,
+            taxAmount: iva,
+            totalAmount: total,
+            userId: parseInt(userId),
+            saleDetails: carrito.map(item => ({
+                productId: item.productId,
+                quantity: item.cantidad,
+                unitPrice: item.precioUnitario,
+                totalPrice: item.totalLinea
+            }))
+        };
+
+        try {
+            const response = await fetch("https://localhost:7062/api/Sales", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(venta)
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                Swal.fire({
+                    title: "Venta registrada",
+                    html: `
+                        <p>Factura #${data.id}</p>
+                        <p>Cliente: ${data.customerName}</p>
+                        <p>Total: $${data.totalAmount.toFixed(2)}</p>
+                    `,
+                    icon: "success"
+                });
+                vaciarCarrito();
+            } else {
+                Swal.fire("Error", "No se pudo registrar la venta", "error");
+            }
+        } catch (error) {
+            Swal.fire("Error", error.message, "error");
+        }
+    }
+
+</script>
 
 

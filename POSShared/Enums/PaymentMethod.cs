@@ -8,9 +8,9 @@ namespace POSShared.Enums
 {
     public enum PaymentMethod
     {
-        Efectivo,
-        Tarjeta,
-        Transferencia
-
+        Efectivo = 0,
+        Tarjeta = 1,
+        Transferencia = 2
     }
+
 }

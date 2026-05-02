@@ -1,4 +1,5 @@
-﻿using POSShared.Entities;
+﻿using POSShared.DTOs;
+using POSShared.Entities;
 
 namespace POSBackend.Services
 {
@@ -7,5 +8,6 @@ namespace POSBackend.Services
         Task<Sale> CreateSaleAsync(Sale sale);
         Task<Sale> GetSaleByIdAsync(int id);
         Task<IEnumerable<Sale>> GetAllSalesAsync();
+        Task<Sale> CreateSaleAsync(SaleDto dto);
     }
 }

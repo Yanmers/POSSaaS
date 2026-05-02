@@ -1,4 +1,5 @@
 ﻿using POSBackend.Repository;
+using POSShared.DTOs;
 using POSShared.Entities;
 
 namespace POSBackend.Services
@@ -47,6 +48,32 @@ namespace POSBackend.Services
         public async Task<IEnumerable<Sale>> GetAllSalesAsync()
         {
             return await _saleRepository.GetAllAsync();
+        }
+
+
+        public async Task<Sale> CreateSaleAsync(SaleDto dto)
+        {
+            var sale = new Sale
+            {
+                CustomerName = dto.CustomerName,
+                PaymentMethod = dto.PaymentMethod,
+                Subtotal = dto.Subtotal,
+                TaxAmount = dto.TaxAmount,
+                TotalAmount = dto.TotalAmount,
+                UserId = dto.UserId,
+                SaleDate = DateTime.Now,
+                SaleDetails = dto.SaleDetails.Select(d => new SaleDetail
+                {
+                    ProductId = d.ProductId,
+                    Quantity = d.Quantity,
+                    UnitPrice = d.UnitPrice,
+                    TotalPrice = d.TotalPrice
+                }).ToList()
+            };
+
+            await _saleRepository.AddAsync(sale);
+            await _saleRepository.SaveChangesAsync();
+            return sale;
         }
     }
 }
