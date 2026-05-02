@@ -31,6 +31,8 @@ namespace POSBackend
             builder.Services.AddScoped<IAuthServices, AuthService>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
+            builder.Services.AddScoped<IProductoService, ProductoService>();
 
 
 

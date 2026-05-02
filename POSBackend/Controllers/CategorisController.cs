@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using POSBackend.Services;
 using POSShared.DTOs;
 
@@ -51,6 +52,23 @@ namespace POSBackend.Controllers
 
             return Ok(request);
         }
+
+
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteCategoria(int id)
+        //{
+        //    var categoria = await _context.Categorias.FindAsync(id);
+        //    if (categoria == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    _context.Categorias.Remove(categoria);
+        //    await _context.SaveChangesAsync();
+
+        //    return NoContent(); // devuelve 204 si todo salió bien
+        //}
+
 
 
 

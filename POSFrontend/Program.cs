@@ -32,13 +32,13 @@ namespace POSFrontend
 
             app.UseRouting();
 
-            app.UseSession();       // después de UseRouting
-            app.UseAuthentication(); // si usas cookies/JWT
+            app.UseSession();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Login}/{action=Index}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
 
             app.Run();

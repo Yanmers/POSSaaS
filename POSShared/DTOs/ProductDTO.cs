@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace POSShared.Entities
+namespace POSShared.DTOs
 {
-    public class Product
+    public class ProductDTO
     {
         public int Id { get; set; }
         public string Code { get; set; } = string.Empty;
@@ -16,12 +16,8 @@ namespace POSShared.Entities
         public int CurrentStock { get; set; }
         public int StockMininum { get; set; }
         public int CategoryId { get; set; }
-        public Category? Category { get; set; }
+        public string CategoryName { get; set; } = string.Empty;
         public bool IsActive { get; set; }
         public string ImagenUrl { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? UpdatedAt { get; set; }
-        public bool IsLowStock => CurrentStock <= StockMininum;
-
     }
 }

@@ -105,7 +105,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <!-- /.card-header -->
                                         <div class="card-body table-responsive p-0">
                                             <table class="table table-hover text-nowrap">
                                                 <thead>
@@ -124,53 +123,9 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="lista-productos">
-                                                    <tr>
-                                                        <td>1</td>
-                                                        <td>P001</td>
-                                                        <td><img src="https://via.placeholder.com/50" alt="Producto A" class="img-thumbnail"></td>
-                                                        <td>Producto A</td>
-                                                        <td>Descripción breve del producto A</td>
-                                                        <td>$100</td>
-                                                        <td>20</td>
-                                                        <td>5</td>
-                                                        <td>Electrónica</td>
-                                                        <td><span class="badge badge-success">Sí</span></td>
-                                                        <td>
-                                                            <button class="btn btn-warning btn-sm" onclick="editarProducto(2)">
-                                                                <i class="fas fa-edit"></i> Editar
-                                                            </button>
-                                                            <button class="btn btn-danger btn-sm" onclick="eliminarProducto(2)">
-                                                                <i class="fas fa-trash"></i> Eliminar
-                                                            </button>
-                                                        </td>
-
-                                                    </tr>
-                                                    <tr>
-                                                        <td>2</td>
-                                                        <td>P002</td>
-                                                        <td><img src="https://via.placeholder.com/50" alt="Producto B" class="img-thumbnail"></td>
-                                                        <td>Producto B</td>
-                                                        <td>Descripción breve del producto B</td>
-                                                        <td>$50</td>
-                                                        <td>10</td>
-                                                        <td>3</td>
-                                                        <td>Accesorios</td>
-                                                        <td><span class="badge badge-danger">No</span></td>
-                                                        <td>
-                                                            <button class="btn btn-warning btn-sm" onclick="editarProducto(2)">
-                                                                <i class="fas fa-edit"></i> Editar
-                                                            </button>
-                                                            <button class="btn btn-danger btn-sm" onclick="eliminarProducto(2)">
-                                                                <i class="fas fa-trash"></i> Eliminar
-                                                            </button>
-                                                        </td>
-
-                                                    </tr>
                                                 </tbody>
                                             </table>
-
                                         </div>
-                                        <!-- /.card-body -->
                                     </div>
                                 </div>
                             </div>
@@ -291,3 +246,166 @@
         </div>
     </div>
 </div>
+
+
+
+<script>
+    let productoEditandoId = 0; // variable global para saber si estamos editando
+
+    // Cargar productos en la tabla
+    async function cargarProductos() {
+        try {
+            const response = await fetch("https://localhost:7062/api/Producto");
+            const productos = await response.json();
+
+            const tbody = document.getElementById("lista-productos");
+            tbody.innerHTML = "";
+
+            productos.forEach(p => {
+                const fila = `
+                    <tr>
+                        <td>${p.id}</td>
+                        <td>${p.code}</td>
+                        <td><img src="${p.imagenUrl}" alt="${p.name}" class="img-thumbnail" width="50"></td>
+                        <td>${p.name}</td>
+                        <td>${p.description}</td>
+                        <td>$${p.price}</td>
+                        <td>${p.currentStock}</td>
+                        <td>${p.stockMininum}</td>
+                        <td>${p.categoryName}</td>
+                        <td><span class="badge ${p.isActive ? 'badge-success' : 'badge-danger'}">${p.isActive ? 'Sí' : 'No'}</span></td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="editarProducto(${p.id})">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${p.id})">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += fila;
+            });
+        } catch (error) {
+            console.error("Error cargando productos:", error);
+        }
+    }
+
+    // Guardar producto (nuevo o editado)
+    async function guardarProducto() {
+        const producto = {
+            id: productoEditandoId,
+            code: document.getElementById("productCode").value,
+            name: document.getElementById("productName").value,
+            description: document.getElementById("productDescription").value,
+            price: parseFloat(document.getElementById("productPrice").value),
+            currentStock: parseInt(document.getElementById("currentStock").value),
+            stockMininum: parseInt(document.getElementById("stockMinimum").value),
+            categoryId: parseInt(document.getElementById("categoryId").value),
+            isActive: document.getElementById("isActive").value === "true",
+            imagenUrl: document.getElementById("imagenUrl").value
+        };
+
+        try {
+            Swal.fire({
+                title: 'Guardando...',
+                text: 'Procesando cambios',
+                icon: 'info',
+                showConfirmButton: false,
+                timer: 1500
+            });
+
+            if (productoEditandoId === 0) {
+                // Crear nuevo producto
+                await fetch("https://localhost:7062/api/Producto", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(producto)
+                });
+                Swal.fire('Éxito', 'Producto creado correctamente', 'success');
+            } else {
+                // Actualizar producto existente
+                await fetch(`https://localhost:7062/api/Producto/${productoEditandoId}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(producto)
+                });
+                Swal.fire('Éxito', 'Producto actualizado correctamente', 'success');
+            }
+
+            $('#addProductsModal').modal('hide');
+            productoEditandoId = 0;
+            cargarProductos();
+        } catch (error) {
+            Swal.fire('Error', 'No se pudo guardar el producto', 'error');
+            console.error("Error guardando producto:", error);
+        }
+    }
+
+    // Editar producto
+    async function editarProducto(id) {
+        try {
+            Swal.fire({
+                title: 'Cargando...',
+                text: 'Obteniendo datos del producto',
+                icon: 'info',
+                showConfirmButton: false,
+                timer: 1000
+            });
+
+            const response = await fetch(`https://localhost:7062/api/Producto/${id}`);
+            const producto = await response.json();
+
+            productoEditandoId = producto.id;
+
+            document.getElementById("productCode").value = producto.code;
+            document.getElementById("productName").value = producto.name;
+            document.getElementById("productDescription").value = producto.description;
+            document.getElementById("productPrice").value = producto.price;
+            document.getElementById("currentStock").value = producto.currentStock;
+            document.getElementById("stockMinimum").value = producto.stockMininum;
+            document.getElementById("categoryId").value = producto.categoryId;
+            document.getElementById("isActive").value = producto.isActive ? "true" : "false";
+            document.getElementById("imagenUrl").value = producto.imagenUrl;
+
+            $('#addProductsModal').modal('show');
+        } catch (error) {
+            Swal.fire('Error', 'No se pudo cargar el producto', 'error');
+            console.error("Error editando producto:", error);
+        }
+    }
+
+    // Eliminar producto
+    async function eliminarProducto(id) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Este producto será eliminado permanentemente.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await fetch(`https://localhost:7062/api/Producto/${id}`, {
+                        method: "DELETE"
+                    });
+                    Swal.fire('Eliminado', 'El producto ha sido eliminado.', 'success');
+                    cargarProductos();
+                } catch (error) {
+                    Swal.fire('Error', 'No se pudo eliminar el producto.', 'error');
+                    console.error("Error eliminando producto:", error);
+                }
+            }
+        });
+    }
+
+    // Ejecutar al cargar la página
+    document.addEventListener("DOMContentLoaded", cargarProductos);
+</script>
+
+
+
+
