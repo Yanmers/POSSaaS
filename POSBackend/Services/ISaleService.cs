@@ -6,8 +6,8 @@ namespace POSBackend.Services
     public interface ISaleService
     {
         Task<Sale> CreateSaleAsync(Sale sale);
-        Task<Sale> GetSaleByIdAsync(int id);
-        Task<IEnumerable<Sale>> GetAllSalesAsync();
-        Task<Sale> CreateSaleAsync(SaleDto dto);
+        Task<SaleResponseDto> CreateSaleAsync(SaleDto dto);
+        Task<SaleResponseDto?> GetSaleByIdAsync(int id);
+        Task<IEnumerable<SaleResponseDto>> GetAllSalesAsync();
     }
 }
