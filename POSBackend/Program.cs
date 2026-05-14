@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Tokens.Experimental;
-using OfficeOpenXml;
 using POSBackend.Data;
 using POSBackend.Repository;
 using POSBackend.Services;
@@ -38,7 +37,6 @@ namespace POSBackend
             builder.Services.AddScoped<ISaleRepository, SaleRepository>();
             builder.Services.AddScoped<ISaleService, SaleService>();
 
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
 
             //JWTToken
@@ -95,10 +93,7 @@ namespace POSBackend
             //Add Cors and Authentication.
             app.UseCors("AllowAllOrigins");
             app.UseAuthentication();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
 
             app.Run();

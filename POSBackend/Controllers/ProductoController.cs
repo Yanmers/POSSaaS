@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OfficeOpenXml;
 using POSBackend.Services;
 using POSShared.DTOs;
 using POSShared.Entities;
@@ -170,54 +169,54 @@ namespace POSBackend.Controllers
             return Ok("Stock actualizado correctamente.");
         }
 
-        [HttpPost("ImportarExcel")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ImportarExcel(IFormFile file)
-        {
-            if (file == null || file.Length == 0)
-                return BadRequest("Archivo no válido");
+        //[HttpPost("ImportarExcel")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //public async Task<IActionResult> ImportarExcel(IFormFile file)
+        //{
+        //    if (file == null || file.Length == 0)
+        //        return BadRequest("Archivo no válido");
 
-            try
-            {
-                using var stream = new MemoryStream();
-                await file.CopyToAsync(stream);
+        //    try
+        //    {
+        //        using var stream = new MemoryStream();
+        //        await file.CopyToAsync(stream);
 
-                using var package = new ExcelPackage(stream);
-                var worksheet = package.Workbook.Worksheets[0];
-                int rowCount = worksheet.Dimension.Rows;
+        //        using var package = new ExcelPackage(stream);
+        //        var worksheet = package.Workbook.Worksheets[0];
+        //        int rowCount = worksheet.Dimension.Rows;
 
-                var productos = new List<Product>();
+        //        var productos = new List<Product>();
 
-                for (int row = 2; row <= rowCount; row++)
-                {
-                    var producto = new Product
-                    {
-                        Code = worksheet.Cells[row, 1].Text,
-                        Name = worksheet.Cells[row, 2].Text,
-                        Description = worksheet.Cells[row, 3].Text,
-                        Price = decimal.Parse(worksheet.Cells[row, 4].Text),
-                        CurrentStock = int.Parse(worksheet.Cells[row, 5].Text),
-                        StockMininum = int.Parse(worksheet.Cells[row, 6].Text),
-                        CategoryId = int.Parse(worksheet.Cells[row, 7].Text),
-                        IsActive = worksheet.Cells[row, 8].Text.ToLower() == "sí",
-                        ImagenUrl = worksheet.Cells[row, 9].Text
-                    };
-                    productos.Add(producto);
-                }
+        //        for (int row = 2; row <= rowCount; row++)
+        //        {
+        //            var producto = new Product
+        //            {
+        //                Code = worksheet.Cells[row, 1].Text,
+        //                Name = worksheet.Cells[row, 2].Text,
+        //                Description = worksheet.Cells[row, 3].Text,
+        //                Price = decimal.Parse(worksheet.Cells[row, 4].Text),
+        //                CurrentStock = int.Parse(worksheet.Cells[row, 5].Text),
+        //                StockMininum = int.Parse(worksheet.Cells[row, 6].Text),
+        //                CategoryId = int.Parse(worksheet.Cells[row, 7].Text),
+        //                IsActive = worksheet.Cells[row, 8].Text.ToLower() == "sí",
+        //                ImagenUrl = worksheet.Cells[row, 9].Text
+        //            };
+        //            productos.Add(producto);
+        //        }
 
 
-                await _productoService.InsertarProductosAsync(productos);
+        //        await _productoService.InsertarProductosAsync(productos);
 
-                return Ok(new { message = "Productos importados correctamente" });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error procesando Excel: {ex.Message}");
-            }
-        }
+        //        return Ok(new { message = "Productos importados correctamente" });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, $"Error procesando Excel: {ex.Message}");
+        //    }
+        //}
 
     }
 }
